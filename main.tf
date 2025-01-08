@@ -185,7 +185,7 @@ resource "aws_security_group" "zabbix_sg" {
 
 # Zabbix Application Server
 resource "aws_instance" "zabbix_server" {
-  ami           = "ami-036841078a4b68e14" # Update with the AMI you provided
+  ami           = "ami-074b5fedd63e481ec" # Update with the AMI you provided
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.private_subnets[0].id
   vpc_security_group_ids = [aws_security_group.zabbix_sg.id]
