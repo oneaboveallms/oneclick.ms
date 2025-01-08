@@ -182,12 +182,12 @@ resource "aws_security_group" "zabbix_sg" {
   }
 }
 
-# nginx Application Server
+# zabbix Application Server
 resource "aws_instance" "zabbix_server" {
   ami           = "ami-074b5fedd63e481ec"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.private_subnets[0].id
-  vpc_security_group_ids = [aws_security_group.nginx_sg.id]
+  vpc_security_group_ids = [aws_security_group.zabbix_sg.id]
   key_name      = "ohio2"
 
   tags = {
@@ -200,7 +200,7 @@ resource "aws_lb" "app_lb" {
   name               = "app-load-balancer"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.nginx_sg.id]
+  security_groups    = [aws_security_group.zabbix_sg.id]
   subnets            = aws_subnet.private_subnets[*].id
 
   tags = {
@@ -242,7 +242,7 @@ resource "aws_launch_template" "app_lt" {
 
   network_interfaces {
     associate_public_ip_address = false
-    security_groups             = [aws_security_group.nginx_sg.id]
+    security_groups             = [aws_security_group.zabbix_sg.id]
     subnet_id                   = aws_subnet.private_subnets[0].id
   }
 
