@@ -1,6 +1,6 @@
 ---
 - name: Install Zabbix Server on Ubuntu
-  hosts: zabbix_server
+  hosts: all
   become: true
 
   tasks:
