@@ -1,6 +1,6 @@
 ---
 - name: Install Zabbix Server on Ubuntu
-  hosts: all
+  hosts: aws_ec2
   become: true
 
   tasks:
