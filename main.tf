@@ -191,8 +191,8 @@ resource "aws_security_group" "zabbix_sg" {
 
 # zabbix Application Server
 resource "aws_instance" "zabbix_server" {
-  ami           = "ami-074b5fedd63e481ec"
-  instance_type = "t2.micro"
+  ami           = "ami-05ce76387e69b8f2d"
+  instance_type = "t2.small"
   subnet_id     = aws_subnet.private_subnets[0].id
   vpc_security_group_ids = [aws_security_group.zabbix_sg.id]
   key_name      = "ohio2"
