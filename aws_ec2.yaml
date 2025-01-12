@@ -4,7 +4,6 @@ regions:
 filters:
   "tag:Name":
     - "zabbix-server"
-    - "bastion-host"
 compose:
   ansible_host: private_ip_address
 strict: False
