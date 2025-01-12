@@ -42,6 +42,26 @@
         name: mysql-server
         state: present
 
+    - name: Ensure root user has full permissions
+      mysql_user:
+        name: root
+        host: localhost
+        priv: "*.*:ALL"
+        password: your_root_password
+        state: present
+
+    - name: Configure root user to use mysql_native_password
+      shell: |
+        mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your_root_password'; FLUSH PRIVILEGES;"
+      args:
+        executable: /bin/bash
+
+    - name: Restart MySQL service
+      systemd:
+        name: mysql
+        state: restarted
+
+
     - name: Start and enable MySQL service
       systemd:
         name: mysql
