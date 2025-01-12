@@ -29,6 +29,14 @@
         state: present
         update_cache: yes
 
+    - name: Install Python MySQL library
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - python3-mysqldb
+        - python3-pymysql
+        
     - name: Create initial database
       mysql_db:
         name: zabbix
