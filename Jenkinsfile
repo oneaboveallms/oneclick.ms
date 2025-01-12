@@ -10,7 +10,6 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         AWS_DEFAULT_REGION    = 'us-east-2'
-        MYSQL_ROOT_PASSWORD   = credentials('mysql-root-password')
     }
 
     stages {
@@ -57,10 +56,7 @@ pipeline {
         }
         stage('Run Ansible Playbooks') {
             steps {
-                sh """
-                ansible-playbook -i inventory_file playbook.yml \
-                --extra-vars "mysql_root_password=${mysql-root-password}"
-                """
+                sh 'ansible-playbook -i aws_ec2.yaml install.yaml'
             }
         }
     }
