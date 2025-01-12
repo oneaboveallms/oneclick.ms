@@ -74,14 +74,6 @@
         collation: utf8mb4_bin
         state: present
 
-    - name: Create Zabbix database user
-      mysql_user:
-        name: zabbix
-        password: "password"
-        host: localhost
-        priv: "zabbix.*:ALL"
-        state: present
-
     - name: Enable log_bin_trust_function_creators
       mysql_variables:
         name: log_bin_trust_function_creators
