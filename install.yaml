@@ -15,7 +15,7 @@
         dest: "/tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb"
 
     - name: Install Zabbix repository package
-      dpkg_selections:
+      dpkg:
         name: "/tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb"
       notify:
         - Update apt cache
