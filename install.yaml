@@ -36,6 +36,18 @@
       with_items:
         - python3-mysqldb
         - python3-pymysql
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Start and enable MySQL service
+      systemd:
+        name: mysql
+        state: started
+        enabled: yes
+
         
     - name: Create initial database
       mysql_db:
