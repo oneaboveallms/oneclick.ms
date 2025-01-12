@@ -32,6 +32,13 @@
       ansible.builtin.file:
         path: /tmp/zabbix-release_latest+ubuntu24.04_all.deb
         state: absent
+        
+    - name: Configure DBPassword in zabbix_server.conf
+      lineinfile:
+        path: /etc/zabbix/zabbix_server.conf
+        regexp: '^# DBPassword='
+        line: 'DBPassword=password'
+        state: present
 
   handlers:
     - name: Restart Zabbix server, agent, and Apache
