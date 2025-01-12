@@ -10,7 +10,7 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         AWS_DEFAULT_REGION    = 'us-east-2'
-        AWS_ACCESS_KEY_ID     = credentials('mysql-root-password')
+        MYSQL_ROOT_PASSWORD   = credentials('mysql-root-password')
     }
 
     stages {
