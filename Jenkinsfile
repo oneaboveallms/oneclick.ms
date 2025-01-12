@@ -58,7 +58,7 @@ pipeline {
             steps {
                 sh """
                 ansible-playbook -i inventory_file playbook.yml \
-                --extra-vars "mysql_root_password=${MYSQL_ROOT_PASSWORD}"
+                --extra-vars "mysql_root_password=${mysql_root_password}"
                 """
             }
         }
