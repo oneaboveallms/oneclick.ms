@@ -56,7 +56,7 @@ pipeline {
         }
         stage('Run Ansible Playbooks') {
             steps {
-                sh 'ansible-playbook -i aws_ec2.yaml install.yaml'
+                sh 'ansible-playbook -i aws_ec2.yaml playbook.yaml'
             }
         }
     }
