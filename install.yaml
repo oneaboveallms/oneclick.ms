@@ -3,9 +3,6 @@
   hosts: all
   become: true
   tasks:
-    
-    - name: Start new shell session with root privileges
-      command: sudo -s
 
     - name: Download Zabbix repository package
       get_url:
