@@ -272,7 +272,7 @@ resource "aws_autoscaling_group" "app_asg" {
   
 }
 
-/*
+
 # VPC Peering
 resource "aws_vpc_peering_connection" "vpc_peering" {
   vpc_id      = aws_vpc.main.id
@@ -309,4 +309,4 @@ resource "aws_route" "default_to_custom" {
 output "vpc_peering_connection_id" {
   value = aws_vpc_peering_connection.vpc_peering.id
 }
-*/
+
