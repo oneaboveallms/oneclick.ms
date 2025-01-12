@@ -1,24 +1,25 @@
 ---
-- name: Install and Configure Zabbix Server
-  hosts: all
+- name: Install Zabbix Server on Ubuntu
+  hosts: aws_ec2
   become: true
-  tasks:
 
-    - name: Download Zabbix repository package
-      get_url:
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name: ["wget", "gnupg"]
+        state: present
+
+    - name: Download Zabbix repository
+      ansible.builtin.get_url:
         url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
         dest: /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 
     - name: Install Zabbix repository package
-      apt:
+      ansible.builtin.apt:
         deb: /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 
-    - name: Update apt repositories
-      apt:
-        update_cache: yes
-
-    - name: Install Zabbix server, frontend, agent
-      apt:
+    - name: Install Zabbix server, frontend, and agent
+      ansible.builtin.apt:
         name:
           - zabbix-server-mysql
           - zabbix-frontend-php
@@ -26,55 +27,123 @@
           - zabbix-sql-scripts
           - zabbix-agent
         state: present
+        update_cache: yes
 
-    - name: Create Zabbix database and user
+    - name: Install Python MySQL library
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python3-mysqldb
+        - python3-pymysql
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Ensure MySQL server is started and enabled
+      systemd:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Secure MySQL installation
+      shell: |
+        mysql_secure_installation <<EOF
+        y
+        your_root_password
+        your_root_password
+        y
+        y
+        y
+        y
+        EOF
+      args:
+        executable: /bin/bash
+      ignore_errors: yes
+
+    - name: Ensure root user has full permissions
+      mysql_user:
+        name: root
+        host: localhost
+        priv: "*.*:ALL"
+        password: your_root_password
+        state: present
+
+    - name: Configure root user to use mysql_native_password
+      shell: |
+        mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your_root_password'; FLUSH PRIVILEGES;"
+      args:
+        executable: /bin/bash
+
+    - name: Restart MySQL service
+      systemd:
+        name: mysql
+        state: restarted
+
+    - name: Create initial Zabbix database
       mysql_db:
         name: zabbix
-        state: present
         encoding: utf8mb4
         collation: utf8mb4_bin
-      become_user: root
+        state: present
 
-    - name: Create Zabbix user with privileges
+    - name: Create Zabbix database user
       mysql_user:
         name: zabbix
-        password: password
+        password: "password"
+        host: localhost
         priv: "zabbix.*:ALL"
         state: present
-      become_user: root
 
-    - name: Set global log_bin_trust_function_creators
+    - name: Enable log_bin_trust_function_creators
       mysql_variables:
-        variable: log_bin_trust_function_creators
+        name: log_bin_trust_function_creators
         value: 1
         state: present
-      become_user: root
 
-    - name: Import initial schema and data for Zabbix
-      command: >
-        zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | 
-        mysql --default-character-set=utf8mb4 -uzabbix -ppassword Zabbix
-      become_user: root
+    - name: Import initial schema and data
+      shell: |
+        zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -ppassword zabbix
+      args:
+        executable: /bin/bash
 
-    - name: Disable log_bin_trust_function_creators after import
+    - name: Disable log_bin_trust_function_creators
       mysql_variables:
-        variable: log_bin_trust_function_creators
+        name: log_bin_trust_function_creators
         value: 0
         state: present
-      become_user: root
 
-    - name: Configure DBPassword in zabbix_server.conf
+    - name: Configure database for Zabbix server
       lineinfile:
-        path: /etc/zabbix/zabbix_server.conf
-        regexp: '^# DBPassword='
-        line: 'DBPassword=password'
+        path: "/etc/zabbix/zabbix_server.conf"
+        regexp: "^# DBPassword=.*"
+        line: "DBPassword=password"
         state: present
 
-    - name: Restart Zabbix server, agent, and Apache
+    - name: Restart services
       systemd:
         name: "{{ item }}"
         state: restarted
+      loop:
+        - zabbix-server
+        - zabbix-agent
+        - apache2
+
+    - name: Enable services on boot
+      systemd:
+        name: "{{ item }}"
         enabled: yes
+      loop:
+        - zabbix-server
+        - zabbix-agent
+        - apache2
+
+    - name: Ensure Zabbix services are running
+      systemd:
+        name: "{{ item }}"
+        state: started
       loop:
         - zabbix-server
         - zabbix-agent
