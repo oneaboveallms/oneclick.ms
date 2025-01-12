@@ -56,7 +56,10 @@ pipeline {
         }
         stage('Run Ansible Playbooks') {
             steps {
-                sh 'ansible-playbook -i aws_ec2.yaml install.yaml'
+                sh """
+                ansible-playbook -i inventory_file playbook.yml \
+                --extra-vars "mysql_root_password=${MYSQL_ROOT_PASSWORD}"
+                """
             }
         }
     }
