@@ -112,9 +112,30 @@ resource "aws_route_table_association" "private" {
 resource "aws_security_group" "bastion_sg" {
   vpc_id = aws_vpc.main.id
 
+    ingress {
+    from_port   = 10051
+    to_port     = 10051
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.0.0/16"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -169,7 +190,7 @@ resource "aws_instance" "bastion" {
   }
 }
 
-# Security Group for nginx Servers
+# Security Group for zabbix Servers
 resource "aws_security_group" "zabbix_sg" {
   vpc_id = aws_vpc.main.id
 
