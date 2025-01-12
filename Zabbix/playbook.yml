@@ -1,6 +1,6 @@
 ---
 - name: Install Zabbix Server on Ubuntu
-  hosts: server
+  hosts: all
   become: true
 
   roles:
