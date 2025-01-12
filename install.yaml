@@ -1,6 +1,6 @@
 ---
 - name: Install and Configure Zabbix Server
-  hosts: zabbix_server
+  hosts: all
   become: true
   tasks:
     
