@@ -201,7 +201,7 @@ resource "aws_instance" "zabbix_server" {
     Name = "zabbix-server"
   }
 }
-
+/*
 # Load Balancer
 resource "aws_lb" "app_lb" {
   name               = "app-load-balancer"
@@ -271,7 +271,7 @@ resource "aws_autoscaling_group" "app_asg" {
   min_size            = 1
   
 }
-
+*/
 
 # VPC Peering
 resource "aws_vpc_peering_connection" "vpc_peering" {
