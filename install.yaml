@@ -9,16 +9,14 @@
         name: ["wget", "gnupg"]
         state: present
 
-    - name: Download Zabbix repository package
-      get_url:
-        url: "https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb"
-        dest: "/tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb"
+    - name: Download Zabbix repository
+      ansible.builtin.get_url:
+        url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
+        dest: /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 
     - name: Install Zabbix repository package
-      dpkg:
-        name: "/tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb"
-      notify:
-        - Update apt cache
+      ansible.builtin.apt:
+        deb: /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 
     - name: Install Zabbix server, frontend, and agent
       apt:
