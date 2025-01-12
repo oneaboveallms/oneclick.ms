@@ -33,7 +33,7 @@
       apt:
         name: "{{ item }}"
         state: present
-      with_items:
+      loop:
         - python3-mysqldb
         - python3-pymysql
 
@@ -41,6 +41,27 @@
       apt:
         name: mysql-server
         state: present
+
+    - name: Ensure MySQL server is started and enabled
+      systemd:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Secure MySQL installation
+      shell: |
+        mysql_secure_installation <<EOF
+        y
+        your_root_password
+        your_root_password
+        y
+        y
+        y
+        y
+        EOF
+      args:
+        executable: /bin/bash
+      ignore_errors: yes
 
     - name: Ensure root user has full permissions
       mysql_user:
@@ -61,15 +82,7 @@
         name: mysql
         state: restarted
 
-
-    - name: Start and enable MySQL service
-      systemd:
-        name: mysql
-        state: started
-        enabled: yes
-
-        
-    - name: Create initial database
+    - name: Create initial Zabbix database
       mysql_db:
         name: zabbix
         encoding: utf8mb4
@@ -122,6 +135,15 @@
       systemd:
         name: "{{ item }}"
         enabled: yes
+      loop:
+        - zabbix-server
+        - zabbix-agent
+        - apache2
+
+    - name: Ensure Zabbix services are running
+      systemd:
+        name: "{{ item }}"
+        state: started
       loop:
         - zabbix-server
         - zabbix-agent
