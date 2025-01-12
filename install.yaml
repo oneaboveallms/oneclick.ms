@@ -48,21 +48,6 @@
         state: started
         enabled: yes
 
-    - name: Secure MySQL installation
-      shell: |
-        mysql_secure_installation <<EOF
-        y
-        your_root_password
-        your_root_password
-        y
-        y
-        y
-        y
-        EOF
-      args:
-        executable: /bin/bash
-      ignore_errors: yes
-
     - name: Ensure root user has full permissions
       mysql_user:
         name: root
