@@ -19,9 +19,15 @@
         deb: /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 
     - name: Install Zabbix server, frontend, and agent
-      apt:
-        name: ["zabbix-server-mysql", "zabbix-frontend-php", "zabbix-apache-conf", "zabbix-sql-scripts", "zabbix-agent"]
+      ansible.builtin.apt:
+        name:
+          - zabbix-server-mysql
+          - zabbix-frontend-php
+          - zabbix-apache-conf
+          - zabbix-sql-scripts
+          - zabbix-agent
         state: present
+        update_cache: yes
 
     - name: Create initial database
       mysql_db:
