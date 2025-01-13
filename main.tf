@@ -276,7 +276,7 @@ resource "aws_autoscaling_group" "app_asg" {
 # VPC Peering
 resource "aws_vpc_peering_connection" "vpc_peering" {
   vpc_id      = aws_vpc.main.id
-  peer_vpc_id = "vpc-08bd5ac0c9b883f3e" # Replace with your Default VPC ID
+  peer_vpc_id = "vpc-08bd5ac0c9b883f3e"
 
   tags = {
     Name = "assignment4-vpc-peering"
@@ -294,14 +294,14 @@ resource "aws_vpc_peering_connection_accepter" "vpc_peering_accepter" {
 
 # Route from Custom VPC to Default VPC
 resource "aws_route" "custom_to_default" {
-  route_table_id         = aws_route_table.private.id # Replace with appropriate route table
-  destination_cidr_block = "172.31.0.0/16" # Replace with Default VPC CIDR block
+  route_table_id         = aws_route_table.private.id 
+  destination_cidr_block = "172.31.0.0/16"
   vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
 }
 
 # Route from Default VPC to Custom VPC
 resource "aws_route" "default_to_custom" {
-  route_table_id         = "rtb-0a787d8cc46365d83" # Replace with Default VPC Route Table ID
+  route_table_id         = "rtb-0a787d8cc46365d83"
   destination_cidr_block = aws_vpc.main.cidr_block
   vpc_peering_connection_id = aws_vpc_peering_connection.vpc_peering.id
 }
