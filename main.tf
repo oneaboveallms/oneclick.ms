@@ -197,6 +197,30 @@ resource "aws_instance" "zabbix_server" {
   vpc_security_group_ids = [aws_security_group.zabbix_sg.id]
   key_name      = "ohio2"
 
+  user_data = <<-EOF
+              #!/bin/bash
+              # Step 1: Update package list and install MySQL server
+              sudo apt update
+              sudo apt install -y mysql-server
+              
+              # Step 2: Ensure MySQL is started and enabled
+              sudo systemctl start mysql
+              sudo systemctl enable mysql
+              
+              # Step 7: Create initial database
+              mysql -uroot -e "CREATE DATABASE zabbix CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;"
+              mysql -uroot -e "CREATE USER 'zabbix'@'localhost' IDENTIFIED BY 'password';"
+              mysql -uroot -e "GRANT ALL PRIVILEGES ON zabbix.* TO 'zabbix'@'localhost';"
+              mysql -uroot -e "SET GLOBAL log_bin_trust_function_creators = 1;"
+              
+              # Step 8: Import initial schema and data
+              zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -ppassword zabbix
+              
+              # Step 9: Disable log_bin_trust_function_creators option after importing
+              mysql -uroot -e "SET GLOBAL log_bin_trust_function_creators = 0;"
+
+              EOF
+
   tags = {
     Name = "zabbix-server"
   }
